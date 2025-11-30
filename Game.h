@@ -15,7 +15,7 @@ public:
     Game();
     void play();
     void switchPlayer();
-    char chooseSymbol();
+    char getSymbol() const;
     int askColumn() const;
     void announceWinner(char symbol) const;
 };

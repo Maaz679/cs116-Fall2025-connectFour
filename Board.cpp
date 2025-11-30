@@ -3,9 +3,7 @@
 //
 
 #include "Board.h"
-
 #include <iostream>
-#include <locale>
 #include <ostream>
 
 Board::Board() {
@@ -71,7 +69,7 @@ void Board::displayBoard() const {
 
     // print the column numbers below the board
     std::cout << " ";   // leading space for alignment
-    for (int c = 1; c < COLS; c++) {
+    for (int c = 1; c <= COLS; c++) {
         std::cout << c << " ";  // print column indices starting from 1
     }
     std::cout << "\n";  // end the line
