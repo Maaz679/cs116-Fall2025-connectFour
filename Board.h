@@ -34,7 +34,7 @@ public:
      * @param symbol 'X' or 'O'
      * @return true if the column is valid and has space
      */
-    bool dropChip(int col, char symbol);
+    bool dropChip(int col, char symbol, bool silent);
 
     /**
      * @note displays the board and the states of each chip
@@ -66,6 +66,13 @@ public:
      * @return
      */
     Board& operator=(const Board& other);
+
+    /**
+     *
+     * @param col
+     * @return true if column is full
+     */
+    bool isColumnFull(int col) const;
 };
 
 

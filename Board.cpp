@@ -22,17 +22,19 @@ Board::Board() {
     }
 }
 
-bool Board::dropChip(int col, char symbol) {
+bool Board::dropChip(int col, char symbol, bool silent = false) {
     // convert user input (1-8) to zero-based index (0-7)
     col -= 1;
 
     // check if column index is outside valid range
     if (col < 0 || col >= COLS) {
-        std::cerr << "Invalid column " << col << std::endl;
+        if (!silent)
+        std::cerr << "Invalid column " << col + 1 << std::endl;
         return false;
     }
     // check if selected column is already full
     if (height[col] >= ROWS) {
+        if (!silent)
         std::cerr << "Column "<< col + 1 << " is full" << std::endl;
         return false;
     }
@@ -191,4 +193,8 @@ Board& Board::operator=(const Board& other) {
     }
 
     return *this;
+}
+
+bool Board::isColumnFull(int col) const {
+    return height[col - 1] >= ROWS;
 }

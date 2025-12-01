@@ -4,6 +4,7 @@
 
 #include "Game.h"
 #include <iostream>
+#include <vector>
 
 // default constructor
 Game::Game() : currentPlayer('X'), vsAI(false) {
@@ -69,7 +70,7 @@ void Game::play() {
 
         // attempt to drop the chip
         // if dropChip returns false, the move was invalid
-        if (!board.dropChip(col, symbol)) {
+        if (!board.dropChip(col, symbol, false)) {
             std::cout << "Invalid move. Try again." << std::endl;
             continue; // skip switching player and retry
         }
@@ -142,9 +143,12 @@ void Game::announceWinner(char symbol) const {
 int Game::aiChooseColumn() {
 
     // try to win immediately
-    for (int col = 1; col < 8; col++) {
+    for (int col = 1; col <= 8; col++) {
+        if (board.isColumnFull(col)) {
+            continue;
+        }
         Board temp = board;
-        if (temp.dropChip(col, 'O')) {
+        if (temp.dropChip(col, 'O', true)) {
             if (temp.checkWin('O')) {
                 return col;
             }
@@ -152,9 +156,12 @@ int Game::aiChooseColumn() {
     }
 
     // block opponent from winning
-    for (int col = 1; col < 8; col++) {
+    for (int col = 1; col <= 8; col++) {
+        if (board.isColumnFull(col)) {
+            continue;
+        }
         Board temp = board;
-        if (temp.dropChip(col, 'X')) {
+        if (temp.dropChip(col, 'X', true)) {
             if (temp.checkWin('X')) {
                 return col;
             }
@@ -162,18 +169,24 @@ int Game::aiChooseColumn() {
     }
 
     // look 2 moves ahead
-    for (int col = 1; col < 8; col++) {
+    for (int col = 1; col <= 8; col++) {
+        if (board.isColumnFull(col)) {
+            continue;
+        }
         Board afterAIMove = board;
 
-        if (!afterAIMove.dropChip(col, 'O'))
+        if (!afterAIMove.dropChip(col, 'O', true))
             continue;
 
         bool badMove = false;
 
-        for (int humanCol = 1; humanCol < 8; humanCol++) {
+        for (int humanCol = 1; humanCol <= 8; humanCol++) {
+            if (board.isColumnFull(humanCol)) {
+                continue;
+            }
             Board afterHumanMove = afterAIMove;
 
-            if (afterHumanMove.dropChip(humanCol, 'X')) {
+            if (afterHumanMove.dropChip(humanCol, 'X', true)) {
                 if (afterHumanMove.checkWin('X')) {
                     badMove = true;
                     break;
@@ -188,19 +201,14 @@ int Game::aiChooseColumn() {
 
 
     // if no winning move or able to block opponent, just play in the center
-    int centerColumns[2] = {4, 5} ;
-    for (int column : centerColumns) {
-        Board temp = board;
-        if (temp.dropChip(column, 'O')) {
-            return column;
+    int priority[8] = {4, 5, 3, 6, 2, 7, 1, 8} ;
+    for (int column : priority) {
+        if (board.isColumnFull(column)) {
+            continue;
         }
-    }
-
-    // otherwise choose the first available column
-    for (int col = 1; col < 8; col++) {
         Board temp = board;
-        if (temp.dropChip(col, 'O')) {
-            return col;
+        if (temp.dropChip(column, 'O', true)) {
+            return column;
         }
     }
 
