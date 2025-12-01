@@ -6,15 +6,42 @@
 #include <iostream>
 
 // default constructor
-Game::Game() : currentPlayer('X') {
+Game::Game() : currentPlayer('X'), vsAI(false) {
     // board is automatically constructed
     // first player defaulted X
+    // default playing human vs human
 }
 
 // main game loop
 void Game::play() {
     // print welcome message
     std::cout << "Welcome to Connect Four!" << std::endl;
+
+    // ask which mode to play
+    std::cout << "Choose mode:" << std::endl;
+    std::cout << "1) Human vs Human" << std::endl;
+    std::cout << "2) Human vs AI" << std::endl;
+    std::cout << "Enter 1 or 2: ";
+
+    int gameMode;
+    std::cin >> gameMode;
+    vsAI = (gameMode == 2);
+
+    if (vsAI) {
+        std::cout << "Who goes first?" << std::endl;
+        std::cout << "1) Human (X)" << std::endl;
+        std::cout << "2) AI (O)" << std::endl;
+        std::cout << "Enter 1 or 2: ";
+
+        int firstPlayer;
+        std::cin >> firstPlayer;
+
+        if (firstPlayer == 2) {
+            currentPlayer = 'O';
+        } else {
+            currentPlayer = 'X';
+        }
+    }
 
     // loop until the board becomes full or someone wins
     while (!board.isFull()) {
@@ -25,8 +52,20 @@ void Game::play() {
         // symbol matches current player
         char symbol = getSymbol();   // X or O depending on current player
 
-        // ask the current player for a column number between 1-8
-        int col = askColumn();
+        // choose column to drop chip
+        int col;
+
+        // AI turn
+        if (vsAI && currentPlayer == 'O') {
+            col = aiChooseColumn();
+            std::cout << "AI chooses column " << col << std::endl;
+        }
+
+        // Human turn
+        else {
+            col = askColumn();
+        }
+
 
         // attempt to drop the chip
         // if dropChip returns false, the move was invalid
@@ -97,4 +136,47 @@ int Game::askColumn() const {
 void Game::announceWinner(char symbol) const {
     // show winner message
     std::cout << "Player " << symbol << " wins!" << std::endl;
+}
+
+// ai player function
+int Game::aiChooseColumn() {
+
+    // try to win immediately
+    for (int col = 1; col < 8; col++) {
+        Board temp = board;
+        if (temp.dropChip(col, 'O')) {
+            if (temp.checkWin('O')) {
+                return col;
+            }
+        }
+    }
+
+    // block opponent from winning
+    for (int col = 1; col < 8; col++) {
+        Board temp = board;
+        if (temp.dropChip(col, 'X')) {
+            if (temp.checkWin('X')) {
+                return col;
+            }
+        }
+    }
+
+    // if no winning move or able to block opponent, just play in the center
+    int centerColumns[2] = {4,5} ;
+    for (int column : centerColumns) {
+        Board temp = board;
+        if (temp.dropChip(column, 'O')) {
+            return column;
+        }
+    }
+
+    // otherwise choose the first available column
+    for (int col = 1; col < 8; col++) {
+        Board temp = board;
+        if (temp.dropChip(col, 'O')) {
+            return col;
+        }
+    }
+
+    return 1;
 }

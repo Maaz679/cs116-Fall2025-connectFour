@@ -11,6 +11,8 @@ class Game {
 private:
     Board board;
     char currentPlayer;
+    bool vsAI;
+    int aiChooseColumn();
 public:
     Game();
     void play();
