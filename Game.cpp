@@ -4,7 +4,6 @@
 
 #include "Game.h"
 #include <iostream>
-#include <vector>
 
 // default constructor
 Game::Game() : currentPlayer('X'), vsAI(false) {
