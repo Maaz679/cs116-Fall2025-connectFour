@@ -53,6 +53,19 @@ public:
      * @return
      */
     bool checkWin(char symbol) const;
+
+    /**
+     * @note copy constructor
+     * @param other
+     */
+    Board(const Board& other);
+
+    /**
+     * @note assignment operator
+     * @param other
+     * @return
+     */
+    Board& operator=(const Board& other);
 };
 
 

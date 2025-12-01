@@ -33,7 +33,7 @@ bool Board::dropChip(int col, char symbol) {
     }
     // check if selected column is already full
     if (height[col] >= ROWS) {
-        std::cerr << "Column "<< col << "is full" << std::endl;
+        std::cerr << "Column "<< col + 1 << " is full" << std::endl;
         return false;
     }
 
@@ -163,4 +163,32 @@ bool Board::checkWin(char symbol) const {
     }
     // no winning line found anywhere on the board
     return false;
+}
+
+Board::Board(const Board& other) {
+    for (int r = 0; r < ROWS; r++) {
+        for (int c = 0; c < COLS; c++) {
+            gameBoard[r][c] = other.gameBoard[r][c];
+        }
+    }
+    for (int c = 0; c < COLS; c++) {
+        height[c] = other.height[c];
+    }
+}
+
+Board& Board::operator=(const Board& other) {
+    if (this == &other) {
+        return *this;
+    }
+
+    for (int r = 0; r < ROWS; r++) {
+        for (int c = 0; c < COLS; c++) {
+            gameBoard[r][c] = other.gameBoard[r][c];
+        }
+    }
+    for (int c = 0; c < COLS; c++) {
+        height[c] = other.height[c];
+    }
+
+    return *this;
 }
