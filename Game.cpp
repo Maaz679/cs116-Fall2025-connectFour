@@ -138,7 +138,7 @@ void Game::announceWinner(char symbol) const {
     std::cout << "Player " << symbol << " wins!" << std::endl;
 }
 
-// ai player function
+// AI player function
 int Game::aiChooseColumn() {
 
     // try to win immediately
@@ -161,8 +161,34 @@ int Game::aiChooseColumn() {
         }
     }
 
+    // look 2 moves ahead
+    for (int col = 1; col < 8; col++) {
+        Board afterAIMove = board;
+
+        if (!afterAIMove.dropChip(col, 'O'))
+            continue;
+
+        bool badMove = false;
+
+        for (int humanCol = 1; humanCol < 8; humanCol++) {
+            Board afterHumanMove = afterAIMove;
+
+            if (afterHumanMove.dropChip(humanCol, 'X')) {
+                if (afterHumanMove.checkWin('X')) {
+                    badMove = true;
+                    break;
+                }
+            }
+        }
+        if (!badMove) {
+            return col;
+        }
+    }
+
+
+
     // if no winning move or able to block opponent, just play in the center
-    int centerColumns[2] = {4,5} ;
+    int centerColumns[2] = {4, 5} ;
     for (int column : centerColumns) {
         Board temp = board;
         if (temp.dropChip(column, 'O')) {
